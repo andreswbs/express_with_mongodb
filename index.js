@@ -23,7 +23,8 @@ function _makeApiStudent(dbStudent) {
         id: dbStudent._id,
         name: dbStudent.name,
         firstName: dbStudent.first_name,
-        email: dbStudent.email
+        email: dbStudent.email,
+        address: dbStudent.address || 'NA'
     }
 }
 
@@ -32,7 +33,8 @@ app.post('/student', async (req, res) => {
     const newStudent = await Student.create({
         name: req.body.name,
         first_name: req.body.firstName,
-        email: req.body.email
+        email: req.body.email,
+        address: req.body.address
     })
 
     res.send(newStudent)
@@ -50,6 +52,44 @@ app.get('/student/:id', async (req, res) => {
     const {id} = req.params
     const e = await Student.findById(id)
     res.send(_makeApiStudent(e))
+})
+
+app.delete('/student/:id', async (req, res) => {
+    const {id} = req.params
+    const e = await Student.deleteOne( {_id: id} )
+    res.send({status: 'deleted'})
+})
+
+// app.put('/student/:id', async (req, res) => {
+//     const {id} = req.params
+//     const e = await Student.updateOne( {_id: id}, {
+//         name: req.body.name || '',
+//         first_name: req.body.firstName || '',
+//         email: req.body.email || ''
+//     } )
+//     res.send(e)
+// })
+
+app.put('/student/:id', async (req, res) => {
+    const {id} = req.params
+    const e = await Student.updateMany( {_id: id}, { $set : {
+        name: req.body.name,
+        first_name: req.body.firstName,
+        email: req.body.email,
+        address: req.body.address
+    }} )
+    res.send(e)
+})
+app.patch('/student', async (req, res) => {
+    const {id} = req.params
+    const criteria = req.query
+    const e = await Student.updateMany( criteria, { $set : {
+        name: req.body.name,
+        first_name: req.body.firstName,
+        email: req.body.email,
+        address: req.body.address
+    }} )
+    res.send(e)
 })
 
 

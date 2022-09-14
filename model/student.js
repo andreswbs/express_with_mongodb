@@ -8,6 +8,7 @@ const studentSchema = new Schema({
     first_name: String,
     email: String,
     age: Number,
+    address: String,
     created: { type: Date, default: Date.now}
 })
 
