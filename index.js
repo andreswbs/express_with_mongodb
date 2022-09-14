@@ -18,6 +18,15 @@ app.use(express.json())
 
 const port = 8080
 
+function _makeApiStudent(dbStudent) {
+    return {
+        id: dbStudent._id,
+        name: dbStudent.name,
+        firstName: dbStudent.first_name,
+        email: dbStudent.email
+    }
+}
+
 app.post('/student', async (req, res) => {
     console.log(req.body)
     const newStudent = await Student.create({
@@ -33,14 +42,16 @@ app.post('/student', async (req, res) => {
 
 app.get('/student', async (req, res) => {
     const studentsArray = await Student.find({})
-    res.send(studentsArray.map((e) => ({
-        id: e._id,
-        name: e.name,
-        firstName: e.first_name,
-        email: e.email
-    })
+        res.send(studentsArray.map((e) => _makeApiStudent(e)
     ))
 })
+
+app.get('/student/:id', async (req, res) => {
+    const {id} = req.params
+    const e = await Student.findById(id)
+    res.send(_makeApiStudent(e))
+})
+
 
 
 app.listen(port, () => console.log('Server listening at ' + port))
